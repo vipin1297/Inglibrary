@@ -8,7 +8,7 @@ node('master'){
          }
    stage("build & SonarQube analysis") {
               withSonarQubeEnv('sonar') {
-                 sh '/opt/maven/bin/mvn clean deploy sonar:sonar'
+                 sh '/opt/maven/bin/mvn clean deploy'
               }
           }
       
