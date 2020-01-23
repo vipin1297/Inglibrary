@@ -8,13 +8,11 @@ node('master'){
          }
    stage("build & SonarQube analysis") {
               withSonarQubeEnv('sonar') {
-                 sh '/opt/maven/bin/mvn clean deploy'
+                 sh '/opt/maven/bin/mvn clean deploy sonar:sonar'
               }
           }
       
       stage("Quality Gate"){
-         withSonarQubeEnv('sonar'){
-         sh '/opt/sonar-scanner-3.3.0.1492-linux/bin/sonar-scanner -Dsonar.host.url=http://3.133.106.68:9000/'
           timeout(time: 60, unit: 'SECONDS') {
               def qg = waitForQualityGate()
               if (qg.status != 'OK') {
@@ -22,7 +20,7 @@ node('master'){
               }
           }
       }
-      }
+      
    stage('Running java backend application'){
              sh 'export JENKINS_NODE_COOKIE=dontKillMe ;nohup java -Dspring.profiles.active=sit -jar $WORKSPACE/target/*.jar &'
          }
